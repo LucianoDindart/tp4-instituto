@@ -70,13 +70,14 @@ INSERT INTO inscripcion(id_curso,id_alumno,fecha,estado_cuota) VALUES
 	(3,1,'2026-04-15','sin pagar');
 
 CREATE OR REPLACE VIEW vacante_curso AS
-SELECT c.codigo AS 'Curso', c.cupo - COUNT(i.id_curso) AS 'Vacantes' FROM
-curso c JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.id_curso;
+	SELECT c.codigo AS 'Curso', c.cupo - COUNT(i.id_curso) AS 'Vacantes' FROM
+	curso c JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.id_curso
+	WITH CHECK OPTION;
 
 CREATE OR REPLACE VIEW alumno_cuota AS
-SELECT CONCAT(a.nombre,' ',a.apellido) AS 'Alumno', c.codigo AS 'Cuota que deben' FROM 
-inscripcion i JOIN alumno a ON i.id_alumno = a.id_alumno
-JOIN curso c ON i.id_curso = c.id_curso WHERE i.estado_cuota = 'sin pagar';
+	SELECT CONCAT(a.nombre,' ',a.apellido) AS 'Alumno', c.codigo AS 'Cuota que deben' FROM 
+	inscripcion i JOIN alumno a ON i.id_alumno = a.id_alumno
+	JOIN curso c ON i.id_curso = c.id_curso WHERE i.estado_cuota = 'sin pagar';
 
 DROP USER IF EXISTS 'admin'@'%';
 CREATE USER 'admin'@'%' IDENTIFIED BY 'admin1234';
