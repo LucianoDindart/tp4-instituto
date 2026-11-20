@@ -1,3 +1,5 @@
+import java.util.HashSet;
+
 public class Curso {
     private String codigo;
     private String idioma; 
@@ -5,6 +7,7 @@ public class Curso {
     private String turno; 
     private int cupo; 
     private double cuota; 
+    private static HashSet<String> codigosUnicos = new HashSet<>();
 
 
     public Curso (String codigo, String idioma, String nivel, String turno, int cupo, double cuota){
@@ -21,8 +24,21 @@ public class Curso {
         return codigo; 
     }
     
-    public void setCodigo (String codigo) {
-        this.codigo = codigo;
+    private  void setCodigo (String codigo) {
+        if (codigo == null) {
+            throw new IllegalArgumentException("El curso tiene que tener codigo.");
+        }
+        String codigoLimpio = codigo.trim();
+        if (codigosUnicos.contains(codigoLimpio)) {
+            throw new IllegalArgumentException("Ese codigo ya esta siendo usado por curso");
+
+        }
+        this.codigo = codigoLimpio;
+        codigosUnicos.add(codigoLimpio);
+
+
+
+        
 
     }
     
