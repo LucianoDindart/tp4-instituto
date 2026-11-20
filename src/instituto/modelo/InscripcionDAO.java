@@ -1,3 +1,5 @@
+package instituto.modelo;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -6,10 +8,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import instituto.modelo.Conexion;
 
 public class InscripcionDAO {
 
-    public List<Inscripcion> listar() throws SQLException{
+    public static List<Inscripcion> listar() throws SQLException{
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion";
         List<Inscripcion> inscripcion = new ArrayList<>();
 
@@ -23,7 +26,7 @@ public class InscripcionDAO {
         return inscripcion;
     }
     
-    public Optional<Inscripcion> buscarPorId(int idCurso, int idAlumno) throws SQLException{
+    public static Optional<Inscripcion> buscarPorId(int idCurso, int idAlumno) throws SQLException{
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota" + "FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
@@ -41,7 +44,7 @@ public class InscripcionDAO {
         return Optional.empty();
     }
 
-    public void insertar(int idCurso, int idAlumno, Inscripcion inscripcion) throws SQLException {
+    public static void insertar(int idCurso, int idAlumno, Inscripcion inscripcion) throws SQLException {
         String sql = "INSERT INTO inscripcion (id_curso, id_alumno, fecha, estado_cuota) VALUES (?, ?, ?, ?)";
         try (Connection con = Conexion.getConexion();
             PreparedStatement ps = con.prepareStatement(sql)) {
@@ -55,10 +58,10 @@ public class InscripcionDAO {
         }
     }
 
-    public boolean borrar(int idCurso, int idAlumno) throws SQLException{
+    public static boolean borrar(int idCurso, int idAlumno) throws SQLException{
         String sql = "DELETE FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
 
-        try (Connection con = Conexion.abrir();
+        try (Connection con = Conexion.getConexion();
         PreparedStatement ps =con.prepareStatement(sql)) {
             ps.setInt(1, idCurso);
             ps.setInt(2, idAlumno);
@@ -66,7 +69,7 @@ public class InscripcionDAO {
         }
     }
 
-    public void modificar(int idCurso, int idAlumno, Inscripcion inscripcion) throws SQLException {
+    public static void modificar(int idCurso, int idAlumno, Inscripcion inscripcion) throws SQLException {
         String sql = "UPDATE inscripcion SET fecha = ?, estado_cuota = ?" + "WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();

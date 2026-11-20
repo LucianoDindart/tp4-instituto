@@ -1,3 +1,5 @@
+package instituto.modelo;
+
 import java.util.HashSet;
 
 public class Curso {

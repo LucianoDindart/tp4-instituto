@@ -1,3 +1,5 @@
+package instituto.modelo;
+
 import java.util.HashSet;
 import java.util.Objects;
 
