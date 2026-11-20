@@ -71,8 +71,7 @@ INSERT INTO inscripcion(id_curso,id_alumno,fecha,estado_cuota) VALUES
 
 CREATE OR REPLACE VIEW vacante_curso AS
 	SELECT c.codigo AS 'Curso', c.cupo - COUNT(i.id_curso) AS 'Vacantes' FROM
-	curso c JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.id_curso
-	WITH CHECK OPTION;
+	curso c JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.id_curso;
 
 CREATE OR REPLACE VIEW alumno_cuota AS
 	SELECT CONCAT(a.nombre,' ',a.apellido) AS 'Alumno', c.codigo AS 'Cuota que deben' FROM 
