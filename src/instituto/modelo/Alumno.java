@@ -1,20 +1,23 @@
+import java.util.HashSet;
+import java.util.Objects;
+
 public class Alumno {
     private String nombre;
     private String apellido;
     private String  dni; 
-    private String correo; 
-
+    private String correo;
+    private static HashSet<String> dnisUnicos = new HashSet<>();
+    
+   
 
     public Alumno (String nombre, String apellido, String dni, String correo){
-     this.nombre = nombre;
+    this.nombre = nombre;
     this.apellido = apellido;
     this.dni = dni;
     this.correo = correo;
 
  }
 
-
-  
 public String getNombre() { 
     return nombre; 
 }
@@ -27,26 +30,39 @@ public void setNombre(String nombre) {
 public String getApellido() { 
     return apellido; 
 }
-    public void setApellido(String apellido) {
+public void setApellido(String apellido) {
      this.apellido = apellido; 
 
-    }
+}
 
 public String getDni(){
     return dni;
 
 }
+    private void setDni(String dni) {
+        if(dni == null) {
+            throw new IllegalArgumentException("El alumno tiene que tener dni.");
+        }
+        String dniLimpio = dni.trim();
+        if (dnisUnicos.contains (dniLimpio)) {
+            throw new IllegalArgumentException ("Ese dni ya esta siendo usado por otro alumno");
 
-public void setDni (String dni){
-    this.dni = dni;
-}
-
-public String getCorreo () {
-    return correo;
-}
-public void setCorreo (String correo) {
-    this.correo = correo;
-}
-
+        }
+        this.dni = dniLimpio;
+        dnisUnicos.add(dniLimpio);
+    }
     
+    
+      
+    public String getCorreo () {
+        return correo;
+    }
+    public void setCorreo (String correo) {
+        this.correo = correo;
+    }
+
+   
+ 
+
+
 }
