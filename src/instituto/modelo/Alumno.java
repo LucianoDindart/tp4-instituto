@@ -57,8 +57,12 @@ public String getDni(){
     public String getCorreo () {
         return correo;
     }
-    public void setCorreo (String correo) {
-        this.correo = correo;
+    private void setCorreo (String correo) {
+            if (correo == null || correo.trim().isEmpty()) {
+                this.correo = null; 
+            } else {
+                this.correo = correo.trim();
+            }
     }
 
    
