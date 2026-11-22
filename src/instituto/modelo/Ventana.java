@@ -131,14 +131,24 @@ public class Ventana extends JFrame {
 		JFrame ventana = new JFrame("Inscripcion");
 		ventana.setSize(640, 360);
 		ventana.setLocationRelativeTo(this);
+		JPanel panelLabel = new JPanel();
 		JPanel panel = new JPanel();
+		panelLabel.setLayout(new FlowLayout(1, 30, 30));
 		panel.setLayout(new FlowLayout(1, 10, 10));
 		JComboBox<String> alumnos = new JComboBox<>(new String[] { "Juan Gomez" });
 		JComboBox<String> cursos = new JComboBox<>(new String[] { "ING-01-M" });
 		JButton inscribir = new JButton("Inscribir");
+		inscribir.addActionListener(e -> {
+			String alumno = (String) alumnos.getSelectedItem();
+			String curso = (String) cursos.getSelectedItem();
+		});
 		JButton cancelar = new JButton("Cancelar");
-		panel.add(crearFila(new JLabel("Alumnos"), alumnos));
-		panel.add(crearFila(new JLabel("Cursos"), cursos));
+		cancelar.addActionListener(e -> ventana.dispose());
+		panelLabel.add(new JLabel("Alumno"));
+		panelLabel.add(new JLabel("Curso"));
+		panel.add(alumnos);
+		panel.add(cursos);
+		ventana.add(panelLabel, BorderLayout.NORTH);
 		ventana.add(panel, BorderLayout.CENTER);
 		JPanel panelBotones = new JPanel();
 		panelBotones.setLayout(new FlowLayout());
@@ -147,18 +157,6 @@ public class Ventana extends JFrame {
 		ventana.add(panelBotones, BorderLayout.SOUTH);
 		ventana.setVisible(true);
 		return ventana;
-	}
-
-	private JPanel crearFila(JLabel label, JComboBox<String> box) {
-		JPanel fila = new JPanel();
-		fila.setLayout(new BoxLayout(fila, BoxLayout.X_AXIS));
-		fila.setAlignmentX(JComboBox.LEFT_ALIGNMENT);
-
-		label.setPreferredSize(new Dimension(85, label.getPreferredSize().height));
-		fila.add(label);
-		fila.add(Box.createHorizontalStrut(8));
-		fila.add(box);
-		return fila;
 	}
 
 	private void cargarBotonBaja() {
