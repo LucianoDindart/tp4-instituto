@@ -12,6 +12,7 @@ CREATE TABLE curso(
 	cuota DECIMAL(10,2) NOT NULL,
 	CONSTRAINT pk_curso PRIMARY KEY(id_curso),
 	CONSTRAINT uq_curso_codigo UNIQUE(codigo),
+	CONSTRAINT chk_curso_cupo CHECK(cupo > 0),
 	CONSTRAINT chk_curso_turno CHECK(turno IN('mañana','tarde','vespertino')),
 	CONSTRAINT chk_curso_nivel CHECK(nivel IN('principiante','intermedio','avanzado'))
 );
