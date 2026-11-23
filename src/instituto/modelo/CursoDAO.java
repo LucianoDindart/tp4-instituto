@@ -4,10 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Statement;
 
 public class CursoDAO {
 
-    public List<Curso> listar() throws SQLException {
+    public static List<Curso> listar() throws SQLException {
         String sql = "SELECT id_curso, codigo, idioma, nivel, turno, cupo, cuota FROM curso ORDER BY codigo";
         List<Curso> cursos = new ArrayList<>();
 
@@ -17,7 +18,6 @@ public class CursoDAO {
 
             while (rs.next()) {
                 cursos.add(new Curso(
-                    rs.getInt("id_curso"),
                     rs.getString("codigo"),
                     rs.getString("idioma"),
                     rs.getString("nivel"),
@@ -30,7 +30,7 @@ public class CursoDAO {
         return cursos;
     }
 
-    public int insertar(String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
+    public static int insertar(String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
         String sql = "INSERT INTO curso (codigo, idioma, nivel, turno, cupo, cuota) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = Conexion.getConexion();
@@ -51,7 +51,7 @@ public class CursoDAO {
         }
     }
 
-    public boolean modificar(int idCurso, String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
+    public static boolean modificar(int idCurso, String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
         String sql = "UPDATE curso SET codigo = ?, idioma = ?, nivel = ?, turno = ?, cupo = ?, cuota = ? WHERE id_curso = ?";
 
         try (Connection con = Conexion.getConexion(); 
@@ -69,7 +69,7 @@ public class CursoDAO {
         }
     }
 
-    public boolean borrar(int idCurso) throws SQLException {
+    public static boolean borrar(int idCurso) throws SQLException {
         String sql = "DELETE FROM curso WHERE id_curso = ?";
 
         try (Connection con = Conexion.getConexion(); 
