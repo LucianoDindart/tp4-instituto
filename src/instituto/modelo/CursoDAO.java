@@ -26,8 +26,15 @@ public class CursoDAO {
                     rs.getDouble("cuota")
                 ));
             }
+        
         }
+        catch (SQLException e) {
+            throw e;
+        
+        }
+        
         return cursos;
+        
     }
 
     public static int insertar(String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
@@ -44,11 +51,16 @@ public class CursoDAO {
             ps.setDouble(6, cuota);
             ps.executeUpdate(); 
 
-            try (ResultSet claves = ps.getGeneratedKeys()) { //[cite: 3]
+            try (ResultSet claves = ps.getGeneratedKeys()) { 
                 claves.next();
                 return claves.getInt(1);
             }
         }
+        catch (SQLException e) {
+            throw e;
+        
+        }
+
     }
 
     public static boolean modificar(int idCurso, String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
@@ -67,6 +79,10 @@ public class CursoDAO {
 
             return ps.executeUpdate() == 1;
         }
+        catch (SQLException e) {
+            throw e;
+        
+        }
     }
 
     public static boolean borrar(int idCurso) throws SQLException {
@@ -77,6 +93,10 @@ public class CursoDAO {
 
             ps.setInt(1, idCurso);
             return ps.executeUpdate() == 1; 
+        }
+        catch (SQLException e) {
+            throw e;
+        
         }
     }
 }
