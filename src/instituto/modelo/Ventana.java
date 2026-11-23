@@ -1,13 +1,10 @@
 package instituto.modelo;
 
 import java.awt.*;
-import java.awt.TrayIcon.MessageType;
-import java.util.concurrent.Flow;
-import instituto.modelo.Conexion;
 import javax.swing.*;
 import javax.swing.table.*;
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.Flow;
 
 public class Ventana extends JFrame {
 	private DefaultTableModel mAlumno;
@@ -45,11 +42,17 @@ public class Ventana extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+
+			@Override
+			public Class<?> getColumnClass(int columna) {
+				return columna > 0 ? Integer.class : String.class;
+			}
 		};
 		for (int i = 0; i < 100; i++) {
 			mAlumno.addRow(new Object[] { "1", "2", "3", "4" });
 		}
 		JTable tabla = new JTable(mAlumno);
+		tabla.setAutoCreateRowSorter(true);
 		panelTabla = new JScrollPane(tabla);
 	}
 
@@ -87,10 +90,10 @@ public class Ventana extends JFrame {
 			formulario.dispose();
 		});
 		aceptar.addActionListener(e -> {
-			String nombre = tNombre.getText();
-			String dni = tDni.getText();
-			String apellido = tApellido.getText();
-			String correo = tCorreo.getText();
+			String nombre = tNombre.getText().trim();
+			String dni = tDni.getText().trim();
+			String apellido = tApellido.getText().trim();
+			String correo = tCorreo.getText().trim();
 			if (dni.isEmpty()) {
 				JOptionPane.showMessageDialog(formulario, "El alumno tiene que tener dni", "Error : dni alumno",
 						JOptionPane.ERROR_MESSAGE);
@@ -128,7 +131,30 @@ public class Ventana extends JFrame {
 		JFrame ventana = new JFrame("Inscripcion");
 		ventana.setSize(640, 360);
 		ventana.setLocationRelativeTo(this);
-
+		JPanel panelLabel = new JPanel();
+		JPanel panel = new JPanel();
+		panelLabel.setLayout(new FlowLayout(1, 30, 30));
+		panel.setLayout(new FlowLayout(1, 10, 10));
+		JComboBox<String> alumnos = new JComboBox<>(new String[] { "Juan Gomez" });
+		JComboBox<String> cursos = new JComboBox<>(new String[] { "ING-01-M" });
+		JButton inscribir = new JButton("Inscribir");
+		inscribir.addActionListener(e -> {
+			String alumno = (String) alumnos.getSelectedItem();
+			String curso = (String) cursos.getSelectedItem();
+		});
+		JButton cancelar = new JButton("Cancelar");
+		cancelar.addActionListener(e -> ventana.dispose());
+		panelLabel.add(new JLabel("Alumno"));
+		panelLabel.add(new JLabel("Curso"));
+		panel.add(alumnos);
+		panel.add(cursos);
+		ventana.add(panelLabel, BorderLayout.NORTH);
+		ventana.add(panel, BorderLayout.CENTER);
+		JPanel panelBotones = new JPanel();
+		panelBotones.setLayout(new FlowLayout());
+		panelBotones.add(inscribir);
+		panelBotones.add(cancelar);
+		ventana.add(panelBotones, BorderLayout.SOUTH);
 		ventana.setVisible(true);
 		return ventana;
 	}
@@ -140,10 +166,5 @@ public class Ventana extends JFrame {
 
 	public static void main(String args[]) {
 		Ventana ventana = new Ventana();
-		try {
-			Connection con = Conexion.getConexion();
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
 	}
 }
