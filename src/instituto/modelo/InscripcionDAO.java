@@ -66,7 +66,7 @@ public class InscripcionDAO {
 
             ps.setInt(1, idCurso);
             ps.setInt(2, idAlumno);
-            ps.setDate(3, Date.valueOf(inscripcion.getFechaInscripcion()));
+            ps.setDate(3, new Date(inscripcion.getFechaInscripcion().getTime()));
             ps.setString(4, inscripcion.isEstadoCuota() ? "pagada" : "sin pagar");
 
             ps.executeUpdate();
@@ -94,7 +94,7 @@ public class InscripcionDAO {
         try (Connection con = Conexion.getConexion();
         PreparedStatement ps = con.prepareStatement(sql)){
 
-            ps.setDate(1, Date.valueOf(inscripcion.getFechaInscripcion()));
+            ps.setDate(1, new Date(inscripcion.getFechaInscripcion().getTime()));
             ps.setString(2, inscripcion.isEstadoCuota() ? "pagada" : "sin pagar");
             ps.setInt(3, idCurso);
             ps.setInt(4, idAlumno);

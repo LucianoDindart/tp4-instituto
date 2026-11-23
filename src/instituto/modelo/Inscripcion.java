@@ -1,11 +1,11 @@
 package instituto.modelo;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public class Inscripcion {
     private final Alumno alumno;
     private final Curso curso;
-    private final LocalDate fechaInscripcion;
+    private Date fechaInscripcion;
     private boolean estadoCuota;
 
     public Inscripcion(Alumno alumno, Curso curso, boolean estadoCuota){
@@ -17,9 +17,14 @@ public class Inscripcion {
         }
         this.alumno = alumno;
         this.curso = curso;
-        this.fechaInscripcion = LocalDate.now();
+        this.fechaInscripcion = new Date();
         this.estadoCuota = estadoCuota;
     }
+
+    public Inscripcion(Alumno alumno, Curso curso, Date fecha, boolean estadoCuota){
+        this(alumno, curso, estadoCuota);
+        this.fechaInscripcion = fecha;
+    }   
 
     public Alumno getAlumno() {
         return alumno;
@@ -29,7 +34,7 @@ public class Inscripcion {
         return curso;
     }
 
-    public LocalDate getFechaInscripcion() {
+    public Date getFechaInscripcion() {
         return fechaInscripcion;
     }
 
