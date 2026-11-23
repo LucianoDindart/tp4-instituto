@@ -106,7 +106,7 @@ public class InscripcionDAO {
     }
 
     public static List<List<Object>> cursoCupoInscriptosVacantes() throws SQLException{
-        String sql = "SELECT c.codigo AS 'curso',c.cupo AS 'cupo', COUNT(i.id_curso) AS 'inscriptos', c.cupo - COUNT(i.id_curso) AS 'vacantes' FROM inscripcion i LEFT JOIN curso c ON i.id_curso = c.id_curso GROUP BY c.codigo,c.id_curso";
+        String sql = "SELECT c.codigo AS 'curso',c.cupo AS 'cupo', COUNT(i.id_curso) AS 'inscriptos', c.cupo - COUNT(i.id_curso) AS 'vacantes' FROM curso c LEFT JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.codigo,c.id_curso";
 
         List<List<Object>> filas = new ArrayList<>();
 
@@ -116,7 +116,7 @@ public class InscripcionDAO {
 
             while (rs.next()) {
                 List<Object> fila = new ArrayList<>();
-                fila.add(rs.getString("codigo"));
+                fila.add(rs.getString("curso"));
                 fila.add(rs.getInt("cupo"));
                 fila.add(rs.getInt("inscriptos"));
                 fila.add(rs.getInt("vacantes"));
