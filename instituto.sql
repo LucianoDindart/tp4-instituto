@@ -71,13 +71,27 @@ INSERT INTO inscripcion(id_curso,id_alumno,fecha,estado_cuota) VALUES
 	(3,1,'2026-04-15','sin pagar');
 
 CREATE OR REPLACE VIEW vacante_curso AS
-	SELECT c.codigo AS 'Curso', c.cupo - COUNT(i.id_curso) AS 'Vacantes' FROM
+	SELECT c.codigo AS 'curso', c.cupo - COUNT(i.id_curso) AS 'vacantes' FROM
 	curso c JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.id_curso;
 
 CREATE OR REPLACE VIEW alumno_cuota AS
 	SELECT CONCAT(a.nombre,' ',a.apellido) AS 'Alumno', c.codigo AS 'Cuota que deben' FROM 
 	inscripcion i JOIN alumno a ON i.id_alumno = a.id_alumno
 	JOIN curso c ON i.id_curso = c.id_curso WHERE i.estado_cuota = 'sin pagar';
+
+DROP TRIGGER IF EXISTS trg_cupo_curso;
+DELIMITER $$
+CREATE TRIGGER trg_cupo_curso BEFORE INSERT ON inscripcion
+FOR EACH ROW
+BEGIN
+	DECLARE v_cupo INT;
+	SELECT c.cupo - COUNT(i.id_curso) INTO v_cupo FROM curso c JOIN inscripcion i ON c.id_curso = i.id_curso WHERE c.id_curso = NEW.id_curso GROUP BY c.id_curso;
+	IF v_cupo <= 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Curso con cupo lleno, inscripcion rechazada';
+	END IF;
+	SET NEW.estado_cuota = LOWER(NEW.estado_cuota);
+END $$
+DELIMITER ;
 
 DROP USER IF EXISTS 'admin'@'%';
 CREATE USER 'admin'@'%' IDENTIFIED BY 'admin1234';
