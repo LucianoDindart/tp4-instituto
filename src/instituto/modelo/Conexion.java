@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-public class Conexion {
-=======
 package instituto.modelo;
 
 import java.io.FileReader;
@@ -26,6 +23,5 @@ public class Conexion {
 	public static Connection getConexion() throws SQLException {
 		return DriverManager.getConnection(DBURL, USER, PASSWORD);
 	}
->>>>>>> 322c3073fc13b6d87f21645a9989dd0a906c3328
 
 }
