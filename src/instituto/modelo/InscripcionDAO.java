@@ -29,6 +29,8 @@ public class InscripcionDAO {
 
                 inscripciones.add(new Inscripcion(alumno, curso, estadoCuota));
             }
+        }catch(SQLException e){
+            throw e;
         }
         return inscripciones;
     }
@@ -51,6 +53,8 @@ public class InscripcionDAO {
                     return Optional.of(new Inscripcion(alumno, curso, estadoCuota));
                 }
             }
+        }catch(SQLException e){
+            throw e;
         }
         return Optional.empty();
     }
@@ -66,6 +70,8 @@ public class InscripcionDAO {
             ps.setString(4, inscripcion.isEstadoCuota() ? "pagada" : "sin pagar");
 
             ps.executeUpdate();
+        }catch(SQLException e){
+            throw e;
         }
     }
 
@@ -77,6 +83,8 @@ public class InscripcionDAO {
             ps.setInt(1, idCurso);
             ps.setInt(2, idAlumno);
             return ps.executeUpdate() == 1;
+        }catch(SQLException e){
+            throw e;
         }
     }
 
@@ -92,6 +100,31 @@ public class InscripcionDAO {
             ps.setInt(4, idAlumno);
 
             ps.executeUpdate();
+        }catch(SQLException e){
+            throw e;
+        }
+    }
+
+    public static List<List<Object>> cursoCupoInscriptosVacantes() throws SQLException{
+        String sql = "SELECT c.codigo AS 'curso',c.cupo AS 'cupo', COUNT(i.id_curso) AS 'inscriptos', c.cupo - COUNT(i.id_curso) AS 'vacantes' FROM inscripcion i LEFT JOIN curso c ON i.id_curso = c.id_curso GROUP BY c.codigo,c.id_curso";
+
+        List<List<Object>> filas = new ArrayList<>();
+
+        try (Connection con = Conexion.getConexion();
+        PreparedStatement ps = con.prepareStatement(sql)){
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                List<Object> fila = new ArrayList<>();
+                fila.add(rs.getString("codigo"));
+                fila.add(rs.getInt("cupo"));
+                fila.add(rs.getInt("inscriptos"));
+                fila.add(rs.getInt("vacantes"));
+                filas.add(fila);
+            }
+            return filas;
+        }catch(SQLException e){
+            throw e;
         }
     }
 }
