@@ -1,4 +1,4 @@
-import java.beans.Statement;
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,13 +6,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-
+import java.util.Map;
+import java.util.HashMap;
 public class AlumnoDAO {
+    private static Map<String,Integer> mapaCodigoId = new HashMap<>();
 
     
 
 
-    public List<Alumno> listar() throws SQLException {
+    public static List<Alumno> listar() throws SQLException {
         String sql = "SELECT id_alumno, dni, nombre, apellido FROM alumno ORDER BY apellido, nombre";
         List<Alumno> alumnos = new ArrayList<>();
 
@@ -22,17 +24,18 @@ public class AlumnoDAO {
 
             while (rs.next()) {
                 alumnos.add(new Alumno(
-                    rs.getInt("id_alumno"),
+                    
                     rs.getString("dni"),
                     rs.getString("nombre"),
-                    rs.getString("apellido")
+                    rs.getString("apellido"),
+                    rs.getString("correo")
                 )); 
             }
         }
         return alumnos;
     }
 
-    public int insertar(String dni, String nombre, String apellido) throws SQLException {
+    public static int insertar(String dni, String nombre, String apellido) throws SQLException {
         String sql = "INSERT INTO alumno (dni, nombre, apellido) VALUES (?, ?, ?)";
 
         try (Connection con = Conexion.getConexion();
@@ -50,7 +53,7 @@ public class AlumnoDAO {
         }
     }
 
-    public boolean modificar(int idAlumno, String dni, String nombre, String apellido) throws SQLException {
+    public static boolean modificar(int idAlumno, String dni, String nombre, String apellido) throws SQLException {
         String sql = "UPDATE alumno SET dni = ?, nombre = ?, apellido = ? WHERE id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
@@ -65,7 +68,7 @@ public class AlumnoDAO {
         }
     }
 
-    public boolean borrar(int idAlumno) throws SQLException {
+    public static boolean borrar(int idAlumno) throws SQLException {
         String sql = "DELETE FROM alumno WHERE id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
@@ -74,7 +77,16 @@ public class AlumnoDAO {
             ps.setInt(1, idAlumno);
             return ps.executeUpdate() == 1;
         }
+
+    
     }
+    public static Integer getidAlumno (String dniAlumno) {
+          return mapaCodigoId.get(dniAlumno);
+        
+
+    }
+
+
 }
     
  
