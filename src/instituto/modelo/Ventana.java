@@ -48,9 +48,6 @@ public class Ventana extends JFrame {
 				return columna > 0 ? Integer.class : String.class;
 			}
 		};
-		for (int i = 0; i < 100; i++) {
-			mAlumno.addRow(new Object[] { "1", "2", "3", "4" });
-		}
 		JTable tabla = new JTable(mAlumno);
 		tabla.setAutoCreateRowSorter(true);
 		panelTabla = new JScrollPane(tabla);
@@ -161,7 +158,49 @@ public class Ventana extends JFrame {
 
 	private void cargarBotonBaja() {
 		JButton botonBaja = new JButton("Baja inscripcion");
+		botonBaja.addActionListener(e -> {
+			JFrame ventana = formularioBaja();
+		});
 		panelBotones.add(botonBaja);
+	}
+
+	private JFrame formularioBaja() {
+		JFrame ventana = new JFrame("Baja inscripcion");
+		ventana.setSize(640, 360);
+		ventana.setLocationRelativeTo(this);
+		DefaultTableModel modelo = new DefaultTableModel(new String[] { "Alumno", "Curso" }, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		for (int i = 0; i < 5; i++) {
+			modelo.addRow(new Object[] { 1, 2 });
+		}
+		JTable tabla = new JTable(modelo);
+		JScrollPane panelTablaBaja = new JScrollPane(tabla);
+		JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		JButton eliminar = new JButton("eliminar");
+		JButton cancelar = new JButton("cancelar");
+		cancelar.addActionListener(e -> ventana.dispose());
+		eliminar.addActionListener(e -> {
+			int seleccionado = tabla.getSelectedRow();
+			if (seleccionado == -1) {
+				JOptionPane.showMessageDialog(ventana, "Debe seleccionar una inscripcion",
+						"Error : inscripcion no seleccionada", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			int indexModel = tabla.convertRowIndexToModel(seleccionado);
+			modelo.removeRow(indexModel);
+		});
+		panelBtn.add(eliminar);
+		panelBtn.add(cancelar);
+		ventana.setLayout(new BorderLayout(10, 10));
+		ventana.add(panelTablaBaja, BorderLayout.CENTER);
+		ventana.add(panelBtn, BorderLayout.SOUTH);
+
+		ventana.setVisible(true);
+		return ventana;
 	}
 
 	public static void main(String args[]) {

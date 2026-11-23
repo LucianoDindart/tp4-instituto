@@ -30,7 +30,7 @@ CREATE TABLE alumno(
 CREATE TABLE inscripcion(
 	id_curso INT,
 	id_alumno INT,
-	fecha DATE NOT NULL DEFAULT(NOW()),
+	fecha DATE NOT NULL DEFAULT(CURRENT_DATE()),
 	estado_cuota VARCHAR(10) DEFAULT('sin pagar') NOT NULL,
 	CONSTRAINT pk_inscripcion PRIMARY KEY(id_curso,id_alumno),
 	CONSTRAINT fk_inscripcion_curso FOREIGN KEY(id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
