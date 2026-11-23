@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.Map;
+import java.util.Optional;
 import java.util.HashMap;
 public class AlumnoDAO {
     private static Map<String,Integer> mapaDniId = new HashMap<>();
@@ -126,6 +126,41 @@ public class AlumnoDAO {
 
     }
 
+    public static Optional<Alumno> buscarPorId(int id) throws SQLException {
+        String sql = "SELECT id, dni, nombre, apellido FROM alumno WHERE id = ?";
+        
+        
+        try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            
+            try (ResultSet rs = ps.executeQuery()){
+                if (rs.next()) {
+                    Alumno alumno = new Alumno(
+                        rs.getString("dni"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("correo    ")
+                    );
+                    return Optional.of(alumno);
+
+                }
+            } catch (SQLException e) {
+                throw e;
+            }
+        }
+
+         return Optional.empty();
+
+    }
+
+    
+            
+        
+
+
+
+         
 
 
 }
