@@ -1,9 +1,11 @@
+import java.lang.classfile.ClassFile.Option;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.sql.Statement;
 
 public class CursoDAO {
@@ -98,6 +100,53 @@ public class CursoDAO {
             throw e;
         
         }
+
+
     }
+    
+    
+    public static Optional<Curso> buscarPorId(int id) throws SQLException {
+        String sql = "SELECT codigo, idioma, nivel, turno, cupo, cuota FROM curso WHERE id = ?";
+
+        try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Curso curso = new Curso(
+                        rs.getString("codigo"),
+                        rs.getString("idioma"),
+                        rs.getString("nivel"),
+                        rs.getString("turno"),
+                        rs.getInt("cupo"),
+                        rs.getDouble("cuota")
+                    );
+                    return Optional.of(curso);
+
+                }
+            }
+
+
+        }catch (SQLException e) {
+            throw e; 
+        }
+        return Optional.empty(); 
+
+
+
+
+
+
+
+    }
+
+    
+    
+       
+
 }
+
+
+
     
