@@ -107,7 +107,7 @@ public class CursoDAO {
     
     
     public static Optional<Curso> buscarPorId(int id) throws SQLException {
-        String sql = "SELECT codigo, idioma, nivel, turno, cupo, cuota FROM curso WHERE id = ?";
+        String sql = "SELECT codigo, idioma, nivel, turno, cupo, cuota FROM curso WHERE id_curso = ?";
 
         try (Connection con = Conexion.getConexion();
          PreparedStatement ps = con.prepareStatement(sql)) {
