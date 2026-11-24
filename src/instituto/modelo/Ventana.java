@@ -5,6 +5,9 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.sql.SQLException;
 import java.util.concurrent.Flow;
+import java.util.List;
+import java.util.ArrayList;
+import instituto.modelo.*;
 
 public class Ventana extends JFrame {
 	private DefaultTableModel mAlumno;
@@ -174,8 +177,13 @@ public class Ventana extends JFrame {
 				return false;
 			}
 		};
-		for (int i = 0; i < 5; i++) {
-			modelo.addRow(new Object[] { 1, 2 });
+		try {
+			List<Inscripcion> lista = InscripcionDAO.listar();
+			for (Inscripcion i : lista) {
+				modelo.addRow(i.getAlumno(), i.getCurso());
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getErrorCode() + e.getMessage());
 		}
 		JTable tabla = new JTable(modelo);
 		JScrollPane panelTablaBaja = new JScrollPane(tabla);
