@@ -43,8 +43,8 @@ public class AlumnoDAO {
         return alumnos;
     }
 
-    public static int insertar(String dni, String nombre, String apellido) throws SQLException {
-        String sql = "INSERT INTO alumno (dni, nombre, apellido) VALUES (?, ?, ?)";
+    public static int insertar(String dni, String nombre, String apellido, String correo) throws SQLException {
+        String sql = "INSERT INTO alumno (dni, nombre, apellido, correo) VALUES (?, ?, ?)";
 
         try (Connection con = Conexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -52,6 +52,7 @@ public class AlumnoDAO {
             ps.setString(1, dni);
             ps.setString(2, nombre);
             ps.setString(3, apellido);
+            ps.setString(4, correo);
             ps.executeUpdate();
 
             try (ResultSet claves = ps.getGeneratedKeys()) {
@@ -66,7 +67,7 @@ public class AlumnoDAO {
     }
 
     public static int modificar(int idAlumno, String dni, String nombre, String apellido) throws SQLException {
-        String sql = "UPDATE alumno SET dni = ?, nombre = ?, apellido = ? WHERE id_alumno = ?";
+        String sql = "UPDATE alumno SET dni = ?, nombre = ?, apellido = ?, correo = ? WHERE id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
 
