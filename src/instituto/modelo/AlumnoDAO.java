@@ -16,7 +16,7 @@ public class AlumnoDAO {
 
 
     public static List<Alumno> listar() throws SQLException {
-        String sql = "SELECT id_alumno, dni, nombre, apellido FROM alumno ORDER BY apellido, nombre";
+        String sql = "SELECT id_alumno, dni, nombre, apellido, correo FROM alumno ORDER BY apellido, nombre";
         List<Alumno> alumnos = new ArrayList<>();
 
         try (Connection con = Conexion.getConexion();
@@ -128,7 +128,7 @@ public class AlumnoDAO {
     }
 
     public static Optional<Alumno> buscarPorId(int id) throws SQLException {
-        String sql = "SELECT id, dni, nombre, apellido FROM alumno WHERE id = ?";
+        String sql = "SELECT id_alumno, dni, nombre, apellido, correo FROM alumno WHERE id_alumno = ?";
         
         
         try (Connection con = Conexion.getConexion();
