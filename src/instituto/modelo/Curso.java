@@ -48,42 +48,28 @@ public class Curso {
         return idioma; 
     }
 
-    public void setIdioma (String idioma) {
-        this.idioma = idioma; 
-    }
+  
 
     public String getNivel () {
         return nivel;
     }
 
-    public void setNivel (String nivel) {
-        this.nivel = nivel;
-
-    }
+ 
 
     public String getTurno () {
         return turno;
 
     }
 
-    public void setTurno (String turno) {
-        this.turno = turno;
-    }
     
     public int getCupo () {
         return cupo; 
     }
-    public void setCupo (int cupo) {
-        this.cupo = cupo; 
-    }
-
+   
     public double getCuota () {
         return cuota;
     }
-    public void setCuota (double cuota) {
-        this.cuota = cuota; 
-    }
-
+  
 
 
 
