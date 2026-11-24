@@ -1,4 +1,5 @@
 package instituto.modelo;
+
 import java.lang.classfile.ClassFile.Option;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,36 +16,35 @@ public class CursoDAO {
         String sql = "SELECT id_curso, codigo, idioma, nivel, turno, cupo, cuota FROM curso ORDER BY codigo";
         List<Curso> cursos = new ArrayList<>();
 
-        try (Connection con = Conexion.getConexion(); 
-             PreparedStatement ps = con.prepareStatement(sql); 
-             ResultSet rs = ps.executeQuery()) { 
+        try (Connection con = Conexion.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 cursos.add(new Curso(
-                    rs.getString("codigo"),
-                    rs.getString("idioma"),
-                    rs.getString("nivel"),
-                    rs.getString("turno"),
-                    rs.getInt("cupo"),
-                    rs.getDouble("cuota")
-                ));
+                        rs.getString("codigo"),
+                        rs.getString("idioma"),
+                        rs.getString("nivel"),
+                        rs.getString("turno"),
+                        rs.getInt("cupo"),
+                        rs.getDouble("cuota")));
             }
-        
-        }
-        catch (SQLException e) {
+
+        } catch (SQLException e) {
             throw e;
-        
+
         }
-        
+
         return cursos;
-        
+
     }
 
-    public static int insertar(String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
+    public static int insertar(String codigo, String idioma, String nivel, String turno, int cupo, double cuota)
+            throws SQLException {
         String sql = "INSERT INTO curso (codigo, idioma, nivel, turno, cupo, cuota) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, codigo);
             ps.setString(2, idioma);
@@ -52,25 +52,25 @@ public class CursoDAO {
             ps.setString(4, turno);
             ps.setInt(5, cupo);
             ps.setDouble(6, cuota);
-            ps.executeUpdate(); 
+            ps.executeUpdate();
 
-            try (ResultSet claves = ps.getGeneratedKeys()) { 
+            try (ResultSet claves = ps.getGeneratedKeys()) {
                 claves.next();
                 return claves.getInt(1);
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        
+
         }
 
     }
 
-    public static boolean modificar(int idCurso, String codigo, String idioma, String nivel, String turno, int cupo, double cuota) throws SQLException {
+    public static boolean modificar(int idCurso, String codigo, String idioma, String nivel, String turno, int cupo,
+            double cuota) throws SQLException {
         String sql = "UPDATE curso SET codigo = ?, idioma = ?, nivel = ?, turno = ?, cupo = ?, cuota = ? WHERE id_curso = ?";
 
-        try (Connection con = Conexion.getConexion(); 
-             PreparedStatement ps = con.prepareStatement(sql)) { 
+        try (Connection con = Conexion.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, codigo);
             ps.setString(2, idioma);
@@ -81,74 +81,54 @@ public class CursoDAO {
             ps.setInt(7, idCurso);
 
             return ps.executeUpdate() == 1;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        
+
         }
     }
 
     public static boolean borrar(int idCurso) throws SQLException {
         String sql = "DELETE FROM curso WHERE id_curso = ?";
 
-        try (Connection con = Conexion.getConexion(); 
-             PreparedStatement ps = con.prepareStatement(sql)) { 
+        try (Connection con = Conexion.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, idCurso);
-            return ps.executeUpdate() == 1; 
-        }
-        catch (SQLException e) {
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
             throw e;
-        
-        }
 
+        }
 
     }
-    
-    
+
     public static Optional<Curso> buscarPorId(int id) throws SQLException {
-        String sql = "SELECT codigo, idioma, nivel, turno, cupo, cuota FROM curso WHERE id = ?";
+        String sql = "SELECT codigo, idioma, nivel, turno, cupo, cuota FROM curso WHERE id_curso = ?";
 
         try (Connection con = Conexion.getConexion();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Curso curso = new Curso(
-                        rs.getString("codigo"),
-                        rs.getString("idioma"),
-                        rs.getString("nivel"),
-                        rs.getString("turno"),
-                        rs.getInt("cupo"),
-                        rs.getDouble("cuota")
-                    );
+                            rs.getString("codigo"),
+                            rs.getString("idioma"),
+                            rs.getString("nivel"),
+                            rs.getString("turno"),
+                            rs.getInt("cupo"),
+                            rs.getDouble("cuota"));
                     return Optional.of(curso);
 
                 }
             }
 
-
-        }catch (SQLException e) {
-            throw e; 
+        } catch (SQLException e) {
+            throw e;
         }
-        return Optional.empty(); 
-
-
-
-
-
-
-
+        return Optional.empty();
 
     }
 
-    
-    
-       
-
 }
 
-
-
-    

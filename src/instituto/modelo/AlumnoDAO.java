@@ -1,4 +1,5 @@
-package instituto.modelo; 
+package instituto.modelo;
+
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,59 +10,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.HashMap;
+
 public class AlumnoDAO {
-    private static Map<String,Integer> mapaDniId = new HashMap<>();
-
-    
-
+    private static Map<String, Integer> mapaDniId = new HashMap<>();
 
     public static List<Alumno> listar() throws SQLException {
-        String sql = "SELECT id_alumno, dni, nombre, apellido FROM alumno ORDER BY apellido, nombre";
+        String sql = "SELECT id_alumno, dni, nombre, apellido , correo FROM alumno ORDER BY apellido, nombre";
         List<Alumno> alumnos = new ArrayList<>();
 
         try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                mapaDniId.put(rs.getString("dni"),rs.getInt("id_alumno"));
+                mapaDniId.put(rs.getString("dni"), rs.getInt("id_alumno"));
                 alumnos.add(new Alumno(
-                    
-                    rs.getString("dni"),
-                    rs.getString("nombre"),
-                    rs.getString("apellido"),
-                    rs.getString("correo")
-                )); 
+
+                        rs.getString("dni"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("correo")));
             }
 
-            
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        
+
         }
         return alumnos;
     }
 
-    public static int insertar(String dni, String nombre, String apellido) throws SQLException {
-        String sql = "INSERT INTO alumno (dni, nombre, apellido) VALUES (?, ?, ?)";
+    public static int insertar(String dni, String nombre, String apellido, String correo) throws SQLException {
+        String sql = "INSERT INTO alumno (dni, nombre, apellido, correo) VALUES (?, ?, ?, ?)";
 
         try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, dni);
             ps.setString(2, nombre);
             ps.setString(3, apellido);
+            ps.setString(4, correo);
             ps.executeUpdate();
 
             try (ResultSet claves = ps.getGeneratedKeys()) {
                 claves.next();
                 return claves.getInt(1);
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        
+
         }
     }
 
@@ -70,7 +66,7 @@ public class AlumnoDAO {
 
         try (Connection con = Conexion.getConexion();
 
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, dni);
             ps.setString(2, nombre);
@@ -80,18 +76,14 @@ public class AlumnoDAO {
             int resultado = ps.executeUpdate();
             if (resultado == 1) {
                 mapaDniId.put(dni, idAlumno);
-            
+
             }
-            return resultado;     
+            return resultado;
         } catch (SQLException e) {
             throw e;
-        
+
         }
-        
 
-        
-
-        
     }
 
     public static int borrar(String dni) throws SQLException {
@@ -102,47 +94,42 @@ public class AlumnoDAO {
         String sql = "DELETE FROM alumno WHERE id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-             
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, idAlumno);
             int resultado = ps.executeUpdate();
             if (resultado == 1) {
                 mapaDniId.remove(dni);
-                
+
             }
-            return resultado; 
+            return resultado;
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        
+
         }
 
-    
     }
-    public static Integer getidAlumno (String dniAlumno) {
-          return mapaDniId.get(dniAlumno);
-        
+
+    public static Integer getidAlumno(String dniAlumno) {
+        return mapaDniId.get(dniAlumno);
 
     }
 
     public static Optional<Alumno> buscarPorId(int id) throws SQLException {
-        String sql = "SELECT id, dni, nombre, apellido FROM alumno WHERE id = ?";
-        
-        
+        String sql = "SELECT id_alumno, dni, nombre, apellido, correo FROM alumno WHERE id_alumno = ?";
+
         try (Connection con = Conexion.getConexion();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
-            
-            try (ResultSet rs = ps.executeQuery()){
+
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Alumno alumno = new Alumno(
-                        rs.getString("dni"),
-                        rs.getString("nombre"),
-                        rs.getString("apellido"),
-                        rs.getString("correo    ")
-                    );
+                            rs.getString("dni"),
+                            rs.getString("nombre"),
+                            rs.getString("apellido"),
+                            rs.getString("correo"));
                     return Optional.of(alumno);
 
                 }
@@ -151,19 +138,8 @@ public class AlumnoDAO {
             }
         }
 
-         return Optional.empty();
+        return Optional.empty();
 
     }
 
-    
-            
-        
-
-
-
-         
-
-
 }
-    
- 
