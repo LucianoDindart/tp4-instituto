@@ -12,6 +12,36 @@ import instituto.modelo.Conexion;
 
 public class InscripcionDAO {
 
+    private static int obtenerIdCurso(String codigo)throws SQLException {
+        String sql = "SELECT id_curso FROM curso WHERE codigo = ?";
+
+        try(Connection con = Conexion.getConexion();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, codigo);
+            try (ResultSet rs = ps.executeQuery()){
+                if (rs.next()) {
+                    return rs.getInt("id_curso");
+                }
+            }
+        }
+        throw new SQLException("No se encontro el curso con el codigo: " + codigo);
+    }
+
+    private static int obtenerIdAlumno(String dni)throws SQLException {
+        String sql = "SELECT id_alumno FROM alumno WHERE dni = ?";
+
+        try(Connection con = Conexion.getConexion();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, dni);
+            try (ResultSet rs = ps.executeQuery()){
+                if (rs.next()) {
+                    return rs.getInt("id_alumno");
+                }
+            }
+        }
+        throw new SQLException("No se encontro el alumno con el dni: " + dni);
+    }
+
     public static List<Inscripcion> listar() throws SQLException{
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion";
         List<Inscripcion> inscripciones = new ArrayList<>();
@@ -35,11 +65,20 @@ public class InscripcionDAO {
         return inscripciones;
     }
     
-    public static Optional<Inscripcion> buscarPorId(int idCurso, int idAlumno) throws SQLException{
+    public static Optional<Inscripcion> buscarPorId(Curso curso, Alumno alumno) throws SQLException{
+
+        if(curso == null || alumno == null){
+            return Optional.empty();
+        }
+
+        int idCurso = obtenerIdCurso(curso.getCodigo());
+        int idAlumno = obtenerIdAlumno(alumno.getDni());
+
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
         PreparedStatement ps = con.prepareStatement(sql)){
+        
 
             ps.setInt(1, idCurso);
             ps.setInt(2, idAlumno);
@@ -47,8 +86,6 @@ public class InscripcionDAO {
             try (ResultSet rs = ps.executeQuery()){
                 if (rs.next()) {
                     boolean estadoCuota = "pagada".equalsIgnoreCase(rs.getString("estado_cuota"));
-                    Alumno alumno = AlumnoDAO.buscarPorId(idAlumno).orElseThrow(() -> new SQLException("No se encontro a un alumno con id " + idAlumno));
-                    Curso curso = CursoDAO.buscarPorId(idCurso).orElseThrow(() -> new SQLException("No se encontro a un curso con el id " + idCurso));
 
                     return Optional.of(new Inscripcion(alumno, curso, estadoCuota));
                 }
@@ -59,8 +96,18 @@ public class InscripcionDAO {
         return Optional.empty();
     }
 
-    public static void insertar(int idCurso, int idAlumno, Inscripcion inscripcion) throws SQLException {
+    public static void insertar(Alumno alumno, Curso curso) throws SQLException {
+
+        if(curso == null || alumno == null){
+           throw new IllegalArgumentException("Debe poner un alumno y un curso valido");
+        }
+
+        Inscripcion inscripcion = new Inscripcion(alumno, curso, false);
+        int idCurso = obtenerIdCurso(curso.getCodigo());
+        int idAlumno = obtenerIdAlumno(alumno.getDni());
+
         String sql = "INSERT INTO inscripcion (id_curso, id_alumno, fecha, estado_cuota) VALUES (?, ?, ?, ?)";
+        
         try (Connection con = Conexion.getConexion();
             PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -75,7 +122,15 @@ public class InscripcionDAO {
         }
     }
 
-    public static boolean borrar(int idCurso, int idAlumno) throws SQLException{
+    public static boolean borrar(Curso curso, Alumno alumno) throws SQLException{
+
+        if(curso == null || alumno == null){
+           return false;
+        }
+
+        int idCurso = obtenerIdCurso(curso.getCodigo());
+        int idAlumno = obtenerIdAlumno(alumno.getDni());
+
         String sql = "DELETE FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
@@ -88,7 +143,15 @@ public class InscripcionDAO {
         }
     }
 
-    public static void modificar(int idCurso, int idAlumno, Inscripcion inscripcion) throws SQLException {
+    public static void modificar(Inscripcion inscripcion) throws SQLException {
+
+        if(inscripcion == null){
+           throw new IllegalArgumentException("La inscripcion no puede ser nula");
+        }
+
+        int idCurso = obtenerIdCurso(inscripcion.getCurso().getCodigo());
+        int idAlumno = obtenerIdAlumno(inscripcion.getAlumno().getDni());
+
         String sql = "UPDATE inscripcion SET fecha = ?, estado_cuota = ? WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
