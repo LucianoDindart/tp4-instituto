@@ -25,10 +25,9 @@ public class AlumnoDAO {
             while (rs.next()) {
                 mapaDniId.put(rs.getString("dni"), rs.getInt("id_alumno"));
                 alumnos.add(new Alumno(
-
-                        rs.getString("dni"),
                         rs.getString("nombre"),
                         rs.getString("apellido"),
+                        rs.getString("dni"),
                         rs.getString("correo")));
             }
 
@@ -126,9 +125,9 @@ public class AlumnoDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Alumno alumno = new Alumno(
-                            rs.getString("dni"),
                             rs.getString("nombre"),
                             rs.getString("apellido"),
+                            rs.getString("dni"),
                             rs.getString("correo"));
                     return Optional.of(alumno);
 
