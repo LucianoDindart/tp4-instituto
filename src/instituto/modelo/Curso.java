@@ -4,29 +4,28 @@ import java.util.HashSet;
 
 public class Curso {
     private String codigo;
-    private String idioma; 
+    private String idioma;
     private String nivel;
-    private String turno; 
-    private int cupo; 
-    private double cuota; 
+    private String turno;
+    private int cupo;
+    private double cuota;
     private static HashSet<String> codigosUnicos = new HashSet<>();
 
-
-    public Curso (String codigo, String idioma, String nivel, String turno, int cupo, double cuota){
+    public Curso(String codigo, String idioma, String nivel, String turno, int cupo, double cuota) {
         this.codigo = codigo;
         this.idioma = idioma;
         this.nivel = nivel;
-        this.turno = turno; 
-        this.cupo = cupo; 
-        this.cuota = cuota; 
-    
+        this.turno = turno;
+        this.cupo = cupo;
+        this.cuota = cuota;
+
     }
 
-    public String getCodigo () {
-        return codigo; 
+    public String getCodigo() {
+        return codigo;
     }
-    
-    private  void setCodigo (String codigo) {
+
+    private void setCodigo(String codigo) {
         if (codigo == null) {
             throw new IllegalArgumentException("El curso tiene que tener codigo.");
         }
@@ -38,40 +37,32 @@ public class Curso {
         this.codigo = codigoLimpio;
         codigosUnicos.add(codigoLimpio);
 
-
-
-        
-
-    }
-    
-    public String getIdioma () {
-        return idioma; 
     }
 
-  
+    public String getIdioma() {
+        return idioma;
+    }
 
-    public String getNivel () {
+    public String getNivel() {
         return nivel;
     }
 
- 
-
-    public String getTurno () {
+    public String getTurno() {
         return turno;
 
     }
 
-    
-    public int getCupo () {
-        return cupo; 
+    public int getCupo() {
+        return cupo;
     }
-   
-    public double getCuota () {
+
+    public double getCuota() {
         return cuota;
     }
-  
 
+    @Override
+    public String toString() {
+        return this.codigo;
+    }
 
-
-    
 }
