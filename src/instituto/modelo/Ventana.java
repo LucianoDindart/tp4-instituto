@@ -26,17 +26,20 @@ public class Ventana extends JFrame {
 		setVisible(true);
 	}
 
-	private void ventanaErrorAlta(SQLException e, JFrame ventana) {
-		switch (e.getErrorCode()) {
-			case 1062:
-				JOptionPane.showMessageDialog(ventana, "Error, ya existe este alumno.", "Error : duplicado",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			default:
-				JOptionPane.showMessageDialog(ventana, "Error desconocido", "Error desconocido",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-		}
+	private void ventanaError(JFrame ventana, String mensaje, String nombre) {
+		JOptionPane.showMessageDialog(ventana, mensaje, "Error : " + nombre, JOptionPane.ERROR_MESSAGE);
+		// switch (e.getErrorCode()) {
+		// case 1062:
+		// JOptionPane.showMessageDialog(ventana, "Error, ya existe este alumno.",
+		// "Error : duplicado",
+		// JOptionPane.ERROR_MESSAGE);
+		// return;
+		// default:
+		// JOptionPane.showMessageDialog(ventana, "Error desconocido", "Error
+		// desconocido",
+		// JOptionPane.ERROR_MESSAGE);
+		// return;
+		// }
 	}
 
 	private void cargarPanelCentral() {
@@ -71,7 +74,7 @@ public class Ventana extends JFrame {
 				mVacanteCurso.addRow(lista.toArray());
 			}
 		} catch (SQLException e) {
-			// ventanaError(e, this);
+			ventanaError(this, "Error al obtener datos de curso", "vacantes curso");
 		}
 		JTable tabla = new JTable(mVacanteCurso);
 		tabla.setAutoCreateRowSorter(true);
@@ -137,7 +140,7 @@ public class Ventana extends JFrame {
 				JOptionPane.showMessageDialog(formulario, "Alumno creado exitosamente!", "Exito",
 						JOptionPane.INFORMATION_MESSAGE);
 			} catch (SQLException x) {
-				ventanaErrorAlta(x, formulario);
+				ventanaError(formulario, "Error al insertar alumno", "alumno");
 			}
 		});
 		panelBoton.add(aceptar);
@@ -249,7 +252,7 @@ public class Ventana extends JFrame {
 				// InscripcionDAO.borrar(modelo.getValueAt(indexModel,1),modelo.getValueAt(indexModel,2));
 				InscripcionDAO.borrar(1, 1);
 			} catch (SQLException x) {
-				ventanaErrorAlta(x, ventana);
+				ventanaError(ventana, "Error al borrar inscripcion", "borrado inscripcion");
 			}
 			modelo.removeRow(indexModel);
 		});
@@ -286,11 +289,15 @@ public class Ventana extends JFrame {
 				return column == 2 ? Integer.class : String.class;
 			}
 		};
-		// try {
-		// InscripcionDAO.getDeudores();
-		// } catch (SQLException e) {
-		// System.out.println(e.getErrorCode() + e.getMessage());
-		// }
+		try {
+			// InscripcionDAO.getDeudores();
+			InscripcionDAO.listar();
+		} catch (SQLException e) {
+			switch (e.getErrorCode()) {
+				case 0:
+					ventanaError(ventana, "Error desconocido", "desconocido");
+			}
+		}
 		JTable tabla = new JTable(modelo);
 		JScrollPane panelTablaDeudor = new JScrollPane(tabla);
 		JButton volver = new JButton("Volver");
@@ -303,7 +310,4 @@ public class Ventana extends JFrame {
 		return ventana;
 	}
 
-	public static void main(String args[]) {
-		Ventana ventana = new Ventana();
-	}
 }
