@@ -1,3 +1,4 @@
+package instituto.modelo;
 import java.util.HashSet;
 
 public class Curso {
@@ -66,6 +67,12 @@ public class Curso {
    
     public double getCuota () {
         return cuota;
+    }
+    
+    
+    @Override
+    public String toString() {
+        return codigo;
     }
   
 
