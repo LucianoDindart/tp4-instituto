@@ -1,4 +1,4 @@
-
+package instituto.modelo;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -57,6 +57,14 @@ public String getDni(){
                 this.correo = correo.trim();
             }
     }
+
+    // Devuelve el alumno con el formato: "Juan Perez (12345678)"
+    @Override
+    public String toString() {
+        return nombre + " " + apellido + " (" + dni + ")";
+    }
+    
+
 
    
  
