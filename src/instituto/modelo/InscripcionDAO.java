@@ -190,6 +190,25 @@ public class InscripcionDAO {
             throw e;
         }
     }
+
+    public static List<List<Object>> getDeudores() throws SQLException{
+        String sql = "SELECT alumno, 'cuota sin pagar', importe FROM alumno_cuota";
+        List<List<Object>> filas = new ArrayList<>();
+
+        try (Connection con = Conexion.getConexion();
+        PreparedStatement ps = con.prepareStatement(sql)){
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                List<Object> fila = new ArrayList<>();
+                fila.add(rs.getString("alumno"));
+                fila.add(rs.getString("cuota sin pagar"));
+                fila.add(rs.getDouble("Importe"));
+                filas.add(fila);                
+            }
+        }
+        return filas;
+    }
 }
 
 
