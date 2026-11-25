@@ -12,7 +12,6 @@ import instituto.modelo.Conexion;
 
 public class InscripcionDAO {
 
-<<<<<<< HEAD
     private static int obtenerIdCurso(String codigo)throws SQLException {
         String sql = "SELECT id_curso FROM curso WHERE codigo = ?";
 
@@ -44,9 +43,6 @@ public class InscripcionDAO {
     }
 
     public static List<Inscripcion> listar() throws SQLException{
-=======
-    public static List<Inscripcion> listar() throws SQLException {
->>>>>>> origin/simon
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion";
         List<Inscripcion> inscripciones = new ArrayList<>();
 
@@ -70,7 +66,6 @@ public class InscripcionDAO {
         }
         return inscripciones;
     }
-<<<<<<< HEAD
     
     public static Optional<Inscripcion> buscarPorId(Curso curso, Alumno alumno) throws SQLException{
 
@@ -86,14 +81,6 @@ public class InscripcionDAO {
         try (Connection con = Conexion.getConexion();
         PreparedStatement ps = con.prepareStatement(sql)){
         
-=======
-
-    public static Optional<Inscripcion> buscarPorId(int idCurso, int idAlumno) throws SQLException {
-        String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
-
-        try (Connection con = Conexion.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
->>>>>>> origin/simon
 
             ps.setInt(1, idCurso);
             ps.setInt(2, idAlumno);
@@ -101,13 +88,6 @@ public class InscripcionDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     boolean estadoCuota = "pagada".equalsIgnoreCase(rs.getString("estado_cuota"));
-<<<<<<< HEAD
-=======
-                    Alumno alumno = AlumnoDAO.buscarPorId(idAlumno)
-                            .orElseThrow(() -> new SQLException("No se encontro a un alumno con id " + idAlumno));
-                    Curso curso = CursoDAO.buscarPorId(idCurso)
-                            .orElseThrow(() -> new SQLException("No se encontro a un curso con el id " + idCurso));
->>>>>>> origin/simon
 
                     return Optional.of(new Inscripcion(alumno, curso, estadoCuota));
                 }
@@ -144,7 +124,6 @@ public class InscripcionDAO {
         }
     }
 
-<<<<<<< HEAD
     public static boolean borrar(Curso curso, Alumno alumno) throws SQLException{
 
         if(curso == null || alumno == null){
@@ -154,9 +133,6 @@ public class InscripcionDAO {
         int idCurso = obtenerIdCurso(curso.getCodigo());
         int idAlumno = obtenerIdAlumno(alumno.getDni());
 
-=======
-    public static boolean borrar(int idCurso, int idAlumno) throws SQLException {
->>>>>>> origin/simon
         String sql = "DELETE FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
