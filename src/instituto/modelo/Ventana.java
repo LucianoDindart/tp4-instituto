@@ -144,6 +144,22 @@ public class Ventana extends JFrame {
 					case 1062:
 						ventanaError(formulario, "El alumno con dni : " + dni + " ya existe.", "alumno");
 						break;
+					case 1406:
+						String error = x.getMessage();
+						if (error.contains("dni")) {
+							ventanaError(formulario, "Error,el dni es muy largo. Ingrese 10 caracteres o menos",
+									"longitud dni");
+						} else if (error.contains("nombre")) {
+							ventanaError(formulario, "Error,su nombre es muy largo. Ingrese 50 caracteres o menos",
+									"longitud nombre");
+						} else if (error.contains("apellido")) {
+							ventanaError(formulario, "Error,su apellido es muy largo. Ingrese 50 caracteres o menos",
+									"longitud apellido");
+						} else if (error.contains("correo")) {
+							ventanaError(formulario, "Error, el correo es muy largo. Ingrese 60 caracteres o menos",
+									"longitud correo");
+						}
+						return;
 					default:
 						ventanaError(formulario, "Ocurrio un error en el sistema, intente nuevamente", "desconocido");
 						break;
