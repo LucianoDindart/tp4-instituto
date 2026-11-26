@@ -1,0 +1,3 @@
+jdbc:mysql://localhost:{puerto}/{base_de_datos}
+{usuario}
+{contraseña}
