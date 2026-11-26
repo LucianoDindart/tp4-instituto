@@ -12,13 +12,13 @@ import instituto.modelo.Conexion;
 
 public class InscripcionDAO {
 
-    private static int obtenerIdCurso(String codigo)throws SQLException {
+    private static int obtenerIdCurso(String codigo) throws SQLException {
         String sql = "SELECT id_curso FROM curso WHERE codigo = ?";
 
-        try(Connection con = Conexion.getConexion();
-        PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = Conexion.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, codigo);
-            try (ResultSet rs = ps.executeQuery()){
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id_curso");
                 }
@@ -27,13 +27,13 @@ public class InscripcionDAO {
         throw new SQLException("No se encontro el curso con el codigo: " + codigo);
     }
 
-    private static int obtenerIdAlumno(String dni)throws SQLException {
+    private static int obtenerIdAlumno(String dni) throws SQLException {
         String sql = "SELECT id_alumno FROM alumno WHERE dni = ?";
 
-        try(Connection con = Conexion.getConexion();
-        PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = Conexion.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, dni);
-            try (ResultSet rs = ps.executeQuery()){
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id_alumno");
                 }
@@ -42,7 +42,7 @@ public class InscripcionDAO {
         throw new SQLException("No se encontro el alumno con el dni: " + dni);
     }
 
-    public static List<Inscripcion> listar() throws SQLException{
+    public static List<Inscripcion> listar() throws SQLException {
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion";
         List<Inscripcion> inscripciones = new ArrayList<>();
 
@@ -66,10 +66,10 @@ public class InscripcionDAO {
         }
         return inscripciones;
     }
-    
-    public static Optional<Inscripcion> buscarPorId(Curso curso, Alumno alumno) throws SQLException{
 
-        if(curso == null || alumno == null){
+    public static Optional<Inscripcion> buscarPorId(Curso curso, Alumno alumno) throws SQLException {
+
+        if (curso == null || alumno == null) {
             return Optional.empty();
         }
 
@@ -79,8 +79,7 @@ public class InscripcionDAO {
         String sql = "SELECT id_curso, id_alumno, fecha, estado_cuota FROM inscripcion WHERE id_curso = ? AND id_alumno = ?";
 
         try (Connection con = Conexion.getConexion();
-        PreparedStatement ps = con.prepareStatement(sql)){
-        
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, idCurso);
             ps.setInt(2, idAlumno);
@@ -100,8 +99,8 @@ public class InscripcionDAO {
 
     public static void insertar(Alumno alumno, Curso curso) throws SQLException {
 
-        if(curso == null || alumno == null){
-           throw new IllegalArgumentException("Debe poner un alumno y un curso valido");
+        if (curso == null || alumno == null) {
+            throw new IllegalArgumentException("Debe poner un alumno y un curso valido");
         }
 
         Inscripcion inscripcion = new Inscripcion(alumno, curso, false);
@@ -109,7 +108,7 @@ public class InscripcionDAO {
         int idAlumno = obtenerIdAlumno(alumno.getDni());
 
         String sql = "INSERT INTO inscripcion (id_curso, id_alumno, fecha, estado_cuota) VALUES (?, ?, ?, ?)";
-        
+
         try (Connection con = Conexion.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -124,10 +123,10 @@ public class InscripcionDAO {
         }
     }
 
-    public static boolean borrar(Curso curso, Alumno alumno) throws SQLException{
+    public static boolean borrar(Curso curso, Alumno alumno) throws SQLException {
 
-        if(curso == null || alumno == null){
-           return false;
+        if (curso == null || alumno == null) {
+            return false;
         }
 
         int idCurso = obtenerIdCurso(curso.getCodigo());
@@ -147,8 +146,8 @@ public class InscripcionDAO {
 
     public static void modificar(Inscripcion inscripcion) throws SQLException {
 
-        if(inscripcion == null){
-           throw new IllegalArgumentException("La inscripcion no puede ser nula");
+        if (inscripcion == null) {
+            throw new IllegalArgumentException("La inscripcion no puede ser nula");
         }
 
         int idCurso = obtenerIdCurso(inscripcion.getCurso().getCodigo());
@@ -170,7 +169,7 @@ public class InscripcionDAO {
         }
     }
 
-    public static List<List<Object>> cursoCupoInscriptosVacantes() throws SQLException{
+    public static List<List<Object>> cursoCupoInscriptosVacantes() throws SQLException {
         String sql = "SELECT curso, cupo, inscriptos, vacantes FROM vacante_curso";
 
         List<List<Object>> filas = new ArrayList<>();
@@ -193,20 +192,20 @@ public class InscripcionDAO {
         }
     }
 
-    public static List<List<Object>> getDeudores() throws SQLException{
-        String sql = "SELECT alumno, 'cuota sin pagar', importe FROM alumno_cuota";
+    public static List<List<Object>> getDeudores() throws SQLException {
+        String sql = "SELECT alumno, cuota_sin_pagar, importe FROM alumno_cuota";
         List<List<Object>> filas = new ArrayList<>();
 
         try (Connection con = Conexion.getConexion();
-        PreparedStatement ps = con.prepareStatement(sql)){
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 List<Object> fila = new ArrayList<>();
                 fila.add(rs.getString("alumno"));
-                fila.add(rs.getString("cuota sin pagar"));
+                fila.add(rs.getString("cuota_sin_pagar"));
                 fila.add(rs.getDouble("Importe"));
-                filas.add(fila);                
+                filas.add(fila);
             }
         }
         return filas;
