@@ -280,16 +280,21 @@ public class Ventana extends JFrame {
 				return;
 			}
 			int indexModel = tabla.convertRowIndexToModel(seleccionado);
-			try {
-				InscripcionDAO.borrar((Curso) modelo.getValueAt(indexModel, 1),
-						(Alumno) modelo.getValueAt(indexModel, 0));
-				JOptionPane.showMessageDialog(ventana, "Inscripcion borrada exitosamente", "Exito",
-						JOptionPane.INFORMATION_MESSAGE);
-				recargarTabla();
-			} catch (SQLException x) {
-				ventanaError(ventana, "Error al borrar inscripcion", "borrado inscripcion");
+			Curso curso = (Curso) modelo.getValueAt(indexModel, 1);
+			Alumno alumno = (Alumno) modelo.getValueAt(indexModel, 0);
+			int opcion = JOptionPane.showConfirmDialog(ventana,
+					"Seguro que quiere borrar inscripcion de " + alumno + " a " + curso);
+			if (opcion == JOptionPane.YES_OPTION) {
+				try {
+					InscripcionDAO.borrar(curso, alumno);
+					JOptionPane.showMessageDialog(ventana, "Inscripcion borrada exitosamente", "Exito",
+							JOptionPane.INFORMATION_MESSAGE);
+					recargarTabla();
+				} catch (SQLException x) {
+					ventanaError(ventana, "Error al borrar inscripcion", "borrado inscripcion");
+				}
+				modelo.removeRow(indexModel);
 			}
-			modelo.removeRow(indexModel);
 		});
 		panelBtn.add(eliminar);
 		panelBtn.add(cancelar);
