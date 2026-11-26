@@ -11,6 +11,7 @@ import instituto.modelo.*;
 
 public class Ventana extends JFrame {
 	private DefaultTableModel mVacanteCurso;
+	private JTable tablaPrincipal;
 	private JScrollPane panelTabla;
 	private JPanel panelBotones;
 
@@ -28,18 +29,6 @@ public class Ventana extends JFrame {
 
 	private void ventanaError(JFrame ventana, String mensaje, String nombre) {
 		JOptionPane.showMessageDialog(ventana, mensaje, "Error : " + nombre, JOptionPane.ERROR_MESSAGE);
-		// switch (e.getErrorCode()) {
-		// case 1062:
-		// JOptionPane.showMessageDialog(ventana, "Error, ya existe este alumno.",
-		// "Error : duplicado",
-		// JOptionPane.ERROR_MESSAGE);
-		// return;
-		// default:
-		// JOptionPane.showMessageDialog(ventana, "Error desconocido", "Error
-		// desconocido",
-		// JOptionPane.ERROR_MESSAGE);
-		// return;
-		// }
 	}
 
 	private void cargarPanelCentral() {
@@ -76,9 +65,24 @@ public class Ventana extends JFrame {
 		} catch (SQLException e) {
 			ventanaError(this, "Error al obtener datos de curso", "vacantes curso");
 		}
-		JTable tabla = new JTable(mVacanteCurso);
-		tabla.setAutoCreateRowSorter(true);
-		panelTabla = new JScrollPane(tabla);
+		tablaPrincipal = new JTable(mVacanteCurso);
+		tablaPrincipal.setAutoCreateRowSorter(true);
+		panelTabla = new JScrollPane(tablaPrincipal);
+	}
+
+	private void recargarTabla() {
+		int cantidad = tablaPrincipal.getRowCount();
+		for (int i = 0; i < cantidad; i++) {
+			mVacanteCurso.removeRow(0);
+		}
+		try {
+			List<List<Object>> lista = InscripcionDAO.cursoCupoInscriptosVacantes();
+			for (List<Object> item : lista) {
+				mVacanteCurso.addRow(item.toArray());
+			}
+		} catch (SQLException e) {
+			ventanaError(this, "Error al obtener datos de curso", "vacantes curso");
+		}
 	}
 
 	private void cargarBotonAlta() {
@@ -120,19 +124,15 @@ public class Ventana extends JFrame {
 			String apellido = tApellido.getText().trim();
 			String correo = tCorreo.getText().trim();
 			if (dni.isEmpty()) {
-				JOptionPane.showMessageDialog(formulario, "El alumno tiene que tener dni", "Error : dni alumno",
-						JOptionPane.ERROR_MESSAGE);
+				ventanaError(formulario, "El alumno tiene que tener dni", "dni alumno");
 				return;
 			}
 			if (nombre.isEmpty()) {
-				JOptionPane.showMessageDialog(formulario, "El alumno tiene que tener nombre", "Error : nombre alumno",
-						JOptionPane.ERROR_MESSAGE);
+				ventanaError(formulario, "El alumno tiene que tener nombre", "nombre alumno");
 				return;
 			}
 			if (apellido.isEmpty()) {
-				JOptionPane.showMessageDialog(formulario, "El alumno tiene que tener apellido",
-						"Error : apellido alumno",
-						JOptionPane.ERROR_MESSAGE);
+				ventanaError(formulario, "El alumno tiene que tener apellido", "apellido alumno");
 				return;
 			}
 			try {
@@ -140,7 +140,14 @@ public class Ventana extends JFrame {
 				JOptionPane.showMessageDialog(formulario, "Alumno creado exitosamente!", "Exito",
 						JOptionPane.INFORMATION_MESSAGE);
 			} catch (SQLException x) {
-				ventanaError(formulario, "Error al insertar alumno", "alumno");
+				switch (x.getErrorCode()) {
+					case 1062:
+						ventanaError(formulario, "El alumno con dni : " + dni + " ya existe.", "alumno");
+						break;
+					default:
+						ventanaError(formulario, "Ocurrio un error en el sistema, intente nuevamente", "desconocido");
+						break;
+				}
 			}
 		});
 		panelBoton.add(aceptar);
@@ -179,17 +186,26 @@ public class Ventana extends JFrame {
 				cursos.addItem(c);
 			}
 		} catch (SQLException e) {
-			// ventanaError(e, ventana);
+			ventanaError(ventana, "No se pudieron leer los datos, intente nuevamente", "desconocido");
 		}
 		JButton inscribir = new JButton("Inscribir");
 		inscribir.addActionListener(e -> {
 			Alumno alumno = (Alumno) alumnos.getSelectedItem();
 			Curso curso = (Curso) cursos.getSelectedItem();
-			// try {
-			// InscripcionDAO.insertar(alumno, curso);
-			// } catch (SQLException x) {
-			// ventanaError(x, ventana);
-			// }
+			try {
+				InscripcionDAO.insertar(alumno, curso);
+				JOptionPane.showMessageDialog(ventana, "Inscripcion exitosa", "Exito", JOptionPane.INFORMATION_MESSAGE);
+				recargarTabla();
+			} catch (SQLException x) {
+				switch (x.getErrorCode()) {
+					case 1062:
+						ventanaError(ventana, "La inscripcion ya existia previamente.", "Inscripcion duplicada");
+						break;
+					case 1644:
+						ventanaError(ventana, "El cupo de " + curso.getCodigo() + " esta lleno.", "Cupo lleno");
+						break;
+				}
+			}
 		});
 		JButton cancelar = new JButton("Cancelar");
 		cancelar.addActionListener(e -> ventana.dispose());
@@ -229,10 +245,10 @@ public class Ventana extends JFrame {
 		try {
 			List<Inscripcion> lista = InscripcionDAO.listar();
 			for (Inscripcion i : lista) {
-				modelo.addRow(new Object[] { i.getAlumno().toString(), i.getCurso() });
+				modelo.addRow(new Object[] { i.getAlumno(), i.getCurso() });
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getErrorCode() + e.getMessage());
+			ventanaError(ventana, "Ocurrio un error al cargar los datos", "carga de datos");
 		}
 		JTable tabla = new JTable(modelo);
 		JScrollPane panelTablaBaja = new JScrollPane(tabla);
@@ -249,8 +265,11 @@ public class Ventana extends JFrame {
 			}
 			int indexModel = tabla.convertRowIndexToModel(seleccionado);
 			try {
-				// InscripcionDAO.borrar(modelo.getValueAt(indexModel,1),modelo.getValueAt(indexModel,2));
-				InscripcionDAO.borrar(1, 1);
+				InscripcionDAO.borrar((Curso) modelo.getValueAt(indexModel, 1),
+						(Alumno) modelo.getValueAt(indexModel, 0));
+				JOptionPane.showMessageDialog(ventana, "Inscripcion borrada exitosamente", "Exito",
+						JOptionPane.INFORMATION_MESSAGE);
+				recargarTabla();
 			} catch (SQLException x) {
 				ventanaError(ventana, "Error al borrar inscripcion", "borrado inscripcion");
 			}
@@ -290,13 +309,12 @@ public class Ventana extends JFrame {
 			}
 		};
 		try {
-			// InscripcionDAO.getDeudores();
-			InscripcionDAO.listar();
-		} catch (SQLException e) {
-			switch (e.getErrorCode()) {
-				case 0:
-					ventanaError(ventana, "Error desconocido", "desconocido");
+			List<List<Object>> deudores = InscripcionDAO.getDeudores();
+			for (List<Object> deudor : deudores) {
+				modelo.addRow(deudor.toArray());
 			}
+		} catch (SQLException e) {
+			ventanaError(ventana, "Error cargando deudores", "deudores");
 		}
 		JTable tabla = new JTable(modelo);
 		JScrollPane panelTablaDeudor = new JScrollPane(tabla);
