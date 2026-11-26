@@ -74,7 +74,7 @@ CREATE OR REPLACE VIEW vacante_curso AS
 	SELECT c.codigo AS 'curso',c.cupo AS 'cupo', COUNT(i.id_curso) AS 'inscriptos', c.cupo - COUNT(i.id_curso) AS 'vacantes' FROM curso c LEFT JOIN inscripcion i ON c.id_curso = i.id_curso GROUP BY c.codigo,c.id_curso;
 
 CREATE OR REPLACE VIEW alumno_cuota AS
-	SELECT CONCAT(a.nombre,' ',a.apellido) AS 'alumno', c.codigo AS 'cuota sin pagar', c.cuota AS 'importe' FROM 
+	SELECT CONCAT(a.nombre,' ',a.apellido) AS 'alumno', c.codigo AS 'cuota_sin_pagar', c.cuota AS 'importe' FROM 
 	inscripcion i JOIN alumno a ON i.id_alumno = a.id_alumno
 	JOIN curso c ON i.id_curso = c.id_curso WHERE i.estado_cuota = 'sin pagar';
 
